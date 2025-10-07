@@ -5,5 +5,5 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base:'/school-project-gpt-/',
+  base:'/',
 })
