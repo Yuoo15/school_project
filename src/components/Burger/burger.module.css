@@ -1,0 +1,99 @@
+    /* Контейнер для бургер-иконки и меню (если нужен) */
+.burgerContainer {
+    position: relative;
+    z-index: 1001; /* чтобы иконка была поверх */
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    list-style: none;
+}
+
+    /* Бургер-иконка: три полоски */
+.burgerIcon {
+    width: 30px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    cursor: pointer;
+    z-index: 1002;
+    margin-right: 30px;
+}
+
+    /* Полоски */
+    .burgerIcon span {
+    height: 3px;
+    background: black;
+    transition: all 0.3s ease;
+    }
+
+    /* Анимация иконки в крестик */
+    .burgerIcon.open span:nth-child(1) {
+    transform: rotate(45deg) translateY(11px);
+    }
+    .burgerIcon.open span:nth-child(2) {
+    opacity: 0;
+    }
+    .burgerIcon.open span:nth-child(3) {
+    transform: rotate(-45deg) translateY(-11px);
+    }
+
+    /* Меню — фиксировано снизу, по ширине экрана */
+.burgerMenu {
+    position: fixed;
+    top: 75px;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 15px 0;;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1000;
+}
+
+    /* Активное состояние — видимо */
+    .burgerMenu.active {
+    opacity: 1;
+    visibility: visible;
+    }
+
+    /* Список меню — вертикальный центр */
+.nav {
+    list-style-type: none;
+    font-size: 16px;
+    font-weight:500;
+    margin: 0;
+    padding-left: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+    /* Отступы между пунктами */
+.nav__item {
+    margin: 10px 0;
+}
+
+    /* Ссылки в меню */
+.burgerMenu a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+    }
+    .link{
+        text-decoration: none;
+        color: #737373;
+        font-family: "Montserrat", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
+    /* Скрываем бургер-иконку и меню на ширине больше 550px */
+@media (min-width: 550px) {
+    .burgerIcon {
+        display: none;
+    }
+    .burgerMenu {
+        display: none;
+    }
+}
