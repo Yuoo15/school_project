@@ -21,7 +21,7 @@ export default function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="about" element={<About />}/>
         </Route>
-    ),{basename:'/school-project-gpt-'})
+    ))
 return (
 <div className="app">
     <RouterProvider router={router}/>
