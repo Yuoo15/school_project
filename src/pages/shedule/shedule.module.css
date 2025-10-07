@@ -1,0 +1,16 @@
+.card{
+    padding-top: 91px;
+    padding-inline: 10px;
+}
+
+.button{
+    padding-inline: 20px;
+    padding-block: 10px;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    border: 0;
+    border-radius: 5px;
+    background-color: #96BB7C;
+    color:white
+}

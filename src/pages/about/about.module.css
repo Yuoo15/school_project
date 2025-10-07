@@ -1,0 +1,21 @@
+.about{
+    padding-inline: 50px;
+    padding-top: 91px;
+    padding-bottom: 30px;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.h1{
+    font-size: medium;
+    color:#252B42
+}
+
+@media(max-width:550px){
+    .about{
+        display: block;
+        min-height: 100dvh;
+    }
+}

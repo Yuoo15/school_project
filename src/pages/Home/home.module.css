@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.main{
+    height: 100dvh;
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: vis 2s ease forwards;
+}
+
+@keyframes vis {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes vis_block {
+    0% {
+
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+.nad{
+    font-family: "Montserrat", sans-serif;
+    color:#96BB7C;
+    margin: 0;
+}
+
+.h1{
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    font-style: normal;
+    font-size: 80px;
+    color:#252B42
+}
+
+.text{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.p{
+    text-decoration: none;
+    color: #737373;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+@media (max-width: 550px) {
+    .main{
+        padding: 40px 20px;
+    }
+
+    .h1{
+        font-size: 60px;
+    }
+
+    .buttons{
+        gap: 10px;
+        margin-top: 30px;
+    }
+    .p{
+        width: 200px;
+    }
+
+    .nad{
+        font-family: "Montserrat", sans-serif;
+        color:#96BB7C;
+        width: 250px;
+        margin: 10px;
+    }
+}

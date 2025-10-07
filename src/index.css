@@ -1,0 +1,60 @@
+:root{
+--bg:white;
+--card:#fff;
+--accent:#0366d6;
+--muted:#666;
+}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,Helvetica,sans-serif;margin:0;background:var(--bg);color:#111;}
+.card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+.grid{display:grid;gap:12px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{border:1px solid #eee;padding:6px;text-align:center}
+.btn{background:var(--accent);color:#fff;padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+.input{padding:6px;border:1px solid #ddd;border-radius:6px;width:100%}
+
+.active{
+    color:#96BB7C;
+    font-weight: bold;
+}
+
+
+
+
+@media (max-width: 600px) {
+  .table,
+  .table thead,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table thead {
+    display: none; /* убираем шапку */
+  }
+
+  .table tr {
+    margin-bottom: 12px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  .table td {
+    border: none;
+    padding: 6px 0;
+    text-align: left;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: inline-block;
+    width: 100px;
+    color: #555;
+  }
+}
