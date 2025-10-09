@@ -1,0 +1,13 @@
+.table{
+    margin: 2px;
+    margin-block: 40px;
+    border-collapse: 'collapse';
+    border-radius: 5px;
+}
+
+.table th{
+    background-color: #96BB7C;
+    color: white;
+    padding: 10px;
+    border: 1px solid black;
+}
