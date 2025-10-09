@@ -20,7 +20,10 @@ export default()=>{
                     <li>Работает без сервера (front-end): данные хранятся в localStorage — удобно для прототипа или одной школы.</li>
                     <li>Опция бэкенда: можно подключить FastAPI/Django + Postgres для хранения, аккаунтов и нескольких школ.</li>
                     <li>Безопасность: если подключать сервер — используем авторизацию и SSL; при фронтенде — данные остаются в браузере пользователя.</li>
-                </ul>
+                </ul><br />
+
+                <h1 className={styles.h1}>Разработчик</h1>
+                <p className={styles.p}>Рамазан Кантаев, Пишу на JavaScript(TS)/React, Python/Django.<br /><br /> Портфолио: <a href="https://new-portfolio-ruby-three.vercel.app" target="_blank" rel="noreferrer">Перейти</a>, <br />GitHub: <a href="https://github.com/Yuoo15" target="_blank" rel="noreferrer">Перейти</a></p>
             </div>
         </>
     )
