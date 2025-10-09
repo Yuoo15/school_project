@@ -34,6 +34,11 @@
     color:#252B42
 }
 
+.img{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
 @media(max-width:550px){
     .li{
         
@@ -55,4 +60,11 @@
     .remove{
         margin-left: 0;
     }
+
+    .img{
+        overflow-x: auto;
+        scroll-snap-type: mandatory;
+        scrollbar-color: #96BB7C;
+    }
 }
+

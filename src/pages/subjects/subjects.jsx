@@ -3,6 +3,7 @@ import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { initialData } from '../../data/initialData'
 import styles from './subjects.module.css'
 import Button from '../../components/Button/button'
+import img from '../../assets/subjects.jpg'
 
 export default function Subjects(){
     const [data, setData] = useLocalStorage('school:data', initialData)
@@ -49,6 +50,9 @@ export default function Subjects(){
                 </li>
             ))}
         </ul>
+        <div className={styles.img}>
+            <img src={img} width={500} height={350} style={{borderRadius: 5}}></img>
+        </div>
         </div>
 )
 }

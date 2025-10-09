@@ -1,7 +1,6 @@
-// src/utils/generator.js
-// Backtracking generator compatible with the project data model:
-// classes: [{id, name}], subjects: [{id,name,hoursPerWeek,difficulty}], teachers: [{id,name,subjects: [subjectId,...]}]
-// settings: { days, periodsPerDay, maxLessonsPerDay, noHeavyConsecutive }
+//с алгоритомом помогал ИИ я бы не смог организовать санпин учитывая все его ограничения 🤷‍♂️
+//Этот верхний комментарий для тех кто полез в мой код и хотел посмотреть что тут да как
+//а так логигу алгоритма понимаю
 function shuffleArray(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -41,7 +40,6 @@ export function generateAllSchedulesBacktracking({ classes, subjects, teachers, 
     const result = {};
     let fail = false;
 
-    // Solve class by class
     for (const cls of classOrder) {
       if (timedOut()) { fail = true; break; }
 

@@ -2,25 +2,23 @@ import { useState, useEffect } from 'react'
 
 
 export function useLocalStorage(key, initialValue) {
-const [state, setState] = useState(() => {
-try {
-const raw = localStorage.getItem(key)
-return raw ? JSON.parse(raw) : initialValue
-} catch (e) {
-console.error('useLocalStorage read failed', e)
-return initialValue
-}
+    const [state, setState] = useState(() => {
+    try {
+        const raw = localStorage.getItem(key)
+        return raw ? JSON.parse(raw) : initialValue
+    } catch (e) {
+        console.error(e)
+        return initialValue
+    }
 })
 
 
 useEffect(() => {
-try {
-localStorage.setItem(key, JSON.stringify(state))
-} catch (e) {
-console.error('useLocalStorage write failed', e)
-}
-}, [key, state])
-
-
-return [state, setState]
+    try {
+        localStorage.setItem(key, JSON.stringify(state))
+    } catch (e) {
+        console.error(e)
+    }
+    }, [key, state])
+    return [state, setState]
 }
