@@ -1,14 +1,6 @@
+//тут немного помогал ии
 import React from "react";
 import { useParams } from "react-router-dom";
-
-/*
-  Props supported:
-    - clsId (optional)  — id класса (например "10s"). Если не передали, попробуем взять из useParams().
-    - schedule           — объект расписаний (может быть undefined)
-    - setSchedule        — функция setSchedule(newScheduleObject) (в шаблоне это wrapper, который записывает в localStorage)
-    - subjects, teachers, settings (optional)
-*/
-
 export default function ScheduleGrid({
   clsId: propClsId,
   schedule: scheduleProp,
@@ -23,23 +15,19 @@ export default function ScheduleGrid({
   const days = Number(settings?.days ?? 5);
   const periods = Number(settings?.periodsPerDay ?? 6);
 
-  // безопасный объект schedule (если передали undefined)
   const safeSchedule = scheduleProp && typeof scheduleProp === "object" ? scheduleProp : {};
 
-  // helper: пустая сетка
+  //пустая сетка
   const makeEmptyGrid = () =>
     Array.from({ length: days }, () => Array.from({ length: periods }, () => null));
 
-  // гарантируем двумерный массив для текущего класса
   const grid = Array.isArray(safeSchedule[clsId]) ? safeSchedule[clsId] : makeEmptyGrid();
 
   const teacherMap = Object.fromEntries((teachers || []).map((t) => [t.id, t]));
 
-  // Обновление одной ячейки: создаём копию safeSchedule -> модифицируем -> вызываем setSchedule(newSchedule)
   function updateCell(dayIdx, periodIdx, newValue) {
     const newSchedule = { ...safeSchedule }; // shallow copy of top-level object
 
-    // ensure class grid exists and is deep-cloned
     if (!Array.isArray(newSchedule[clsId])) {
       newSchedule[clsId] = makeEmptyGrid();
     } else {
@@ -52,15 +40,13 @@ export default function ScheduleGrid({
       try {
         setSchedule(newSchedule);
       } catch (err) {
-        // если setSchedule — нестандартная функция, логируем ошибку
-        console.error("Ошибка при setSchedule(newSchedule):", err);
+        console.error("Ошибка тута setSchedule(newSchedule):", err);
       }
     } else {
-      console.error("setSchedule не является функцией:", setSchedule);
+      console.error("setSchedule не функция:", setSchedule);
     }
   }
 
-  // безопасный рендер, если clsId ещё нет — показываем подсказку
   if (!clsId) {
     return (
       <div className="card">
@@ -69,9 +55,6 @@ export default function ScheduleGrid({
       </div>
     );
   }
-
-  // отладочная инфа (можно временно включить)
-  // console.log({ clsId, scheduleProp, safeSchedule, grid });
 
   return (
     <div className="card">
@@ -106,7 +89,6 @@ export default function ScheduleGrid({
                             updateCell(d, p, null);
                             return;
                           }
-                          // выбираем первого доступного учителя для предмета (если есть)
                           const t = (teachers || []).find((t) => (t.subjects || []).includes(sid));
                           updateCell(d, p, { subjectId: sid, teacherId: t ? t.id : null });
                         }}

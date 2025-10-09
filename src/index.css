@@ -33,7 +33,7 @@ body{font-family:Inter,system-ui,Arial,Helvetica,sans-serif;margin:0;background:
   }
 
   .table thead {
-    display: none; /* убираем шапку */
+    display: none; 
   }
 
   .table tr {
