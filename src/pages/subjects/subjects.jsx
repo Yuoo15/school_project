@@ -51,7 +51,8 @@ export default function Subjects(){
                 </li>
             ))}
         </ul>
-        <Table />
+        <div style={{display:'flex', justifyContent: 'center'}}><Table /></div>
+        
         </div>
 )
 }
