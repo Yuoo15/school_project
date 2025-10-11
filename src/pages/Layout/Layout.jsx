@@ -32,7 +32,8 @@ export default()=>{
             </main>
             <footer className={styles.footer}>
             <div className={styles.footer_content}>
-                <p>© {new Date().getFullYear()} Общеобразовательная школа имени <b>М. Горького</b></p>
+                <p>© {new Date().getFullYear()} Разработка сайта - <b>Кантаев Р.A.</b></p>
+                <p>Проект для школы им. М. Горького</p>
                 <p>Все права защищены</p>
             </div>
             </footer>
