@@ -31,9 +31,14 @@ export default () => {
 
   return (
     <>
-      <h1>Вход</h1>
+    <header className={styles.header}>
+      <h1 classname={styles.h1}>School scheduler</h1>
+    </header>
+    <div className={styles.container}>
+      <h1 className={styles.h1}>Вход</h1>
       <form onSubmit={handleSubmit(handler)} className={styles.form}>
         <input
+        className={styles.input}
           type="text"
           placeholder="Введите логин"
           {...register("username", {
@@ -51,6 +56,7 @@ export default () => {
         {nameError && <p className={styles.error}>{nameError}</p>}
 
         <input
+        className={styles.input}
           type="password"
           placeholder="Введите пароль"
           {...register("password", {
@@ -67,8 +73,17 @@ export default () => {
         />
         {passError && <p className={styles.error}>{passError}</p>}
 
-        <button type="submit">Войти</button>
+        <button className={styles.button} type="submit">Войти</button>
       </form>
+      <a href="https://wa.me/77006540387?text=Здраствуйте%2C%20у%20меня%20проблемы%20со%20входом%20в%20систему">Проблемы со входом в систему?</a>
+      </div>
+                  <footer className={styles.footer}>
+                  <div className={styles.footer_content}>
+                      <p>© {new Date().getFullYear()} Разработка сайта - <b>Кантаев Р.A.</b></p>
+                      <p>Проект для школы им. М. Горького</p>
+                      <p>Все права защищены</p>
+                  </div>
+                  </footer>
     </>
   );
 };
