@@ -3,7 +3,6 @@ import styles from './Layout.module.css'
 import Button from "../../components/Button/button"
 import BurgerMenu from "../../components/Burger/burger"
 import { useEffect, useState } from "react"
-
 export default()=>{
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -14,7 +13,7 @@ export default()=>{
     }, []);
     return(
         <>
-            <header>
+            <header className={styles.header}>
                 <h1 className={styles.h1}>SS</h1>
                 <nav className={styles.nav}>
                     <NavLink className={styles.link} to="/">Home</NavLink>
