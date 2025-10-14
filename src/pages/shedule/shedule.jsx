@@ -4,8 +4,11 @@ import { initialData } from '../../data/initialData'
 import ScheduleGrid from '../../components/ScheduleGrid'
 import { generateAllSchedulesBacktracking } from '../../utils/generator'
 import styles from './shedule.module.css'
+import { useAuth } from '../../hooks/forlogun'
 
 export default function Schedule() {
+  const { isAuth } = useAuth()
+  const isAdmin = isAuth?.status === 'admin'
   const [data, setData] = useLocalStorage('school:data', initialData)
   const [error, setError] = useState(null)
 
@@ -42,17 +45,18 @@ export default function Schedule() {
         {error && <div className="error-message">{error}</div>}
       </div>
 
-      {data.classes.map((c) => (
-        <ScheduleGrid
-          key={c.id}
-          clsId={c.id}
-          schedule={data.schedule}
-          setSchedule={setSchedule}
-          subjects={data.subjects}
-          teachers={data.teachers}
-          settings={data.settings}
-        />
-      ))}
+        {data.classes.map((c) => (
+          <ScheduleGrid
+            key={c.id}
+            clsId={c.id}
+            schedule={data.schedule}
+            setSchedule={isAdmin ? setSchedule : null} // детям запрещаем редактировать
+            subjects={data.subjects}
+            teachers={data.teachers}
+            settings={data.settings}
+            isAdmin={isAdmin} // передаём статус
+          />
+        ))}
     </div>
   )
 }
