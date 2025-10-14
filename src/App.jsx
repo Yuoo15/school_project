@@ -10,7 +10,7 @@ import Settings from './pages/settings/settings';
 import About from './pages/about/about';
 import Reg from './components/reg/reg';
 import Login from './pages/login/login';
-import KidHome from './pages/kid/homeKid'; 
+import KidHome from './pages/kid/homekid'; 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
