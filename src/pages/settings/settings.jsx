@@ -19,7 +19,7 @@ const [data, setData] = useLocalStorage('school:data', initialData)
             <label style={{color: '#252B42'}}>Дней в неделе: <input className="input" type="number" value={data.settings.days} onChange={e=>setSetting('days', Number(e.target.value))} /></label>
             <label style={{color: '#252B42'}}>Уроков в день: <input className="input" type="number" value={data.settings.periodsPerDay} onChange={e=>setSetting('periodsPerDay', Number(e.target.value))} /></label>
             <label style={{color: '#252B42'}}>Запрет подряд тяжёлых предметов:
-            <input style={{marginRight: 10}} type="checkbox" checked={data.settings.noHeavyConsecutive} onChange={e=>setSetting('noHeavyConsecutive', e.target.checked)} />
+            <input style={{marginRight: 10, marginBottom:10}} type="checkbox" checked={data.settings.noHeavyConsecutive} onChange={e=>setSetting('noHeavyConsecutive', e.target.checked)} />
             <button onClick={()=>logout()} className={styles.button}>Выйти</button>
         </label> 
     </div>
