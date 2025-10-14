@@ -4,10 +4,14 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
 import 'normalize.css'
+import {Provider} from './provider/provider'
+import Reg from './components/reg/reg'
 
 
 createRoot(document.getElementById('root')).render(
 <React.StrictMode>
-    <App />
+    <Provider>
+        <App />
+    </Provider>
 </React.StrictMode>
 )
