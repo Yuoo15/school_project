@@ -4,6 +4,7 @@ import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { initialData } from '../../data/initialData'
 import ScheduleGrid from '../../components/ScheduleGrid'
 import { users } from '../../data/db'
+import style from './kid.module.css'
 
 export default function ScheduleKid() {
   const { isAuth, logout } = useAuth()
@@ -16,15 +17,21 @@ export default function ScheduleKid() {
     return <div>Доступ запрещён</div>
   }
 
+  const clsId = user?.clsId || null
+  const studentClass = data.classes.find((c) => c.id === clsId)
+
   return (
-    <div>
-      <h1>Расписание для ученика</h1>
-      <p>Здраствуйте, {name}!</p>
-      <button onClick={() => logout(() => {})}>Выйти</button>
-      {data.classes.map((c) => (
+    <div className={style.container}>
+      <h1 className={style.h1}>Расписание для ученика</h1>
+      <p className={style.p}>Здравствуйте, {name}!</p>
+      <p className={style.p}>Ваш класс: {studentClass?.id || 'не найден'}</p>
+
+      <button className={style.button} onClick={() => logout(() => {})}>Выйти</button>
+
+      {studentClass && (
         <ScheduleGrid
-          key={c.id}
-          clsId={c.id}
+          key={studentClass.id}
+          clsId={studentClass.id}
           schedule={data.schedule}
           setSchedule={null}
           subjects={data.subjects}
@@ -32,7 +39,7 @@ export default function ScheduleKid() {
           settings={data.settings}
           isAdmin={false}
         />
-      ))}
+      )}
     </div>
   )
 }

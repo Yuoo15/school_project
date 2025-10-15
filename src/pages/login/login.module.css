@@ -73,6 +73,7 @@
 @media(max-width:550px){
     .input{
         width: 290px;
+        height: 40px;
     }
     .h1{
         font-size: 24px;
