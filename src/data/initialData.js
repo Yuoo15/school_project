@@ -9,9 +9,9 @@ export const initialData = {
     { id: 't2', name: 'Серикова А.А.', subjects: ['kaz_lit'] },
     { id: 't3', name: 'Касымов Б.Б.', subjects: ['hist_kaz', 'world_hist'] },
     { id: 't4', name: 'Петров П.П.', subjects: ['algebra'] },
-    { id: 't17', name: 'Саидов К.К.', subjects: ['algebra'] }, // дублирующий учитель математики
+    { id: 't17', name: 'Саидов К.К.', subjects: ['algebra'] }, 
     { id: 't18', name: 'Медетова Л.Л.', subjects: ['geometry'] },
-    { id: 't19', name: 'Васильев И.И.', subjects: ['geometry'] }, // второй для геометрии
+    { id: 't19', name: 'Васильев И.И.', subjects: ['geometry'] }, 
     { id: 't5', name: 'Сидоров С.С.', subjects: ['inf'] },
     { id: 't6', name: 'Джонсон М.', subjects: ['eng'] },
     { id: 't7', name: 'Алиева Г.Г.', subjects: ['culture'] },
