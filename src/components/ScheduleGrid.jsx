@@ -27,7 +27,7 @@ export default function ScheduleGrid({
   const teacherMap = Object.fromEntries((teachers || []).map((t) => [t.id, t]));
 
   function updateCell(dayIdx, periodIdx, newValue) {
-    if (!isAdmin) return; // запрещаем редактирование детям
+    if (!isAdmin) return;
 
     const newSchedule = { ...safeSchedule };
 
