@@ -8,21 +8,34 @@ export default function ScheduleGrid({
   subjects = [],
   teachers = [],
   settings = {},
-  isAdmin = true, // добавляем пропс для проверки прав
+  isAdmin = true,
 }) {
   const params = useParams();
   const clsId = propClsId || params.clsId || null;
 
-  const days = Number(settings?.days ?? 5);
   const periods = Number(settings?.periodsPerDay ?? 6);
 
   const safeSchedule = scheduleProp && typeof scheduleProp === "object" ? scheduleProp : {};
 
-  // пустая сетка
+  const gridFromSchedule = Array.isArray(safeSchedule[clsId]) ? safeSchedule[clsId] : [];
+  
+  let actualDays = 0;
+  if (gridFromSchedule.length > 0) {
+    for (let d = gridFromSchedule.length - 1; d >= 0; d--) {
+      const dayHasLessons = gridFromSchedule[d]?.some(cell => cell !== null && cell !== undefined);
+      if (dayHasLessons) {
+        actualDays = d + 1;
+        break;
+      }
+    }
+  }
+  
+  const days = actualDays > 0 ? actualDays : Math.min(Number(settings?.days ?? 5), 5);
+
   const makeEmptyGrid = () =>
     Array.from({ length: days }, () => Array.from({ length: periods }, () => null));
 
-  const grid = Array.isArray(safeSchedule[clsId]) ? safeSchedule[clsId] : makeEmptyGrid();
+  const grid = gridFromSchedule.length > 0 ? gridFromSchedule.slice(0, days) : makeEmptyGrid();
 
   const teacherMap = Object.fromEntries((teachers || []).map((t) => [t.id, t]));
 
@@ -59,6 +72,8 @@ export default function ScheduleGrid({
     );
   }
 
+  const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+
   return (
     <div className="card">
       <h3>Расписание — класс {clsId}</h3>
@@ -76,7 +91,7 @@ export default function ScheduleGrid({
           <tbody>
             {Array.from({ length: days }).map((_, d) => (
               <tr key={d}>
-                <th>День {d + 1}</th>
+                <th>{dayNames[d] || `День ${d + 1}`}</th>
 
                 {Array.from({ length: periods }).map((_, p) => {
                   const cell = (grid[d] && grid[d][p]) || null;
@@ -86,7 +101,7 @@ export default function ScheduleGrid({
                         <select
                           className="input"
                           value={cell?.subjectId ?? ""}
-                          disabled={!isAdmin} // запрет редактирования для детей
+                          disabled={!isAdmin}
                           onChange={(e) => {
                             if (!isAdmin) return;
                             const sid = e.target.value || null;

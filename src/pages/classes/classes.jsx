@@ -32,7 +32,7 @@ return (
         <p className={styles.p}>1 этап - добавьте класс</p>
         <div className={styles.next}><Button to="/teachers" text="Дальше"/></div>
         <div style={{display:'flex',gap:8}}>
-            <input className="input" placeholder="Например: 5А" value={name} onChange={e=>setName(e.target.value)} />
+            <input className="input" placeholder="Например: 11Б" value={name} onChange={e=>setName(e.target.value)} />
             <button className={styles.button} onClick={addClass}>Добавить</button>
         </div>
 
