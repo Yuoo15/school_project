@@ -22,11 +22,6 @@ export const users = [
     {id: 8, username: "Aida", password: "aida22", status: "kid", name: "Аида", lastname: "Байжанова", clsId: "10A", avatar: photo},
     {id: 18, username: "Boris", password: "boris1", status: "kid", name: "Борис", lastname: "Федоров", clsId: "10A", avatar: photo},
     {id: 19, username: "Kamila", password: "kamila1", status: "kid", name: "Камила", lastname: "Алиева", clsId: "10A", avatar: photo},
-    
-    // Учителя
-    {id: 5, username: "OlgaP", password: "olga2020", status: "teacher", name: "Ольга", lastname: "Петрова", clsId: null, avatar: photo},
-    {id: 6, username: "SergeyK", password: "serg123", status: "teacher", name: "Сергей", lastname: "Кузнецов", clsId: null, avatar: photo},
-    
     // Родители и гости
     {id: 9, username: "Parent1", password: "parent1", status: "parent", name: "Наталья", lastname: "Смирнова", clsId: null, avatar: photo},
     {id: 10, username: "Guest", password: "guest", status: "guest", name: "Гость", lastname: "", clsId: null, avatar: photo},

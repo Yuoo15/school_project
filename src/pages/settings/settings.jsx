@@ -4,7 +4,7 @@ import { initialData } from '../../data/initialData'
 import styles from './settings.module.css'
 import { useAuth } from '../../hooks/forlogun'
 import { users } from '../../data/db'
-
+ 
 export default function Settings(){
     const [data, setData] = useLocalStorage('school:data', initialData)
     const {isAuth, logout} = useAuth()
@@ -16,33 +16,35 @@ export default function Settings(){
     const name = user?.name || 'Гость'
     const status = user?.status || 'guest'
     const photo = user?.avatar || ''
-
+ 
     function setSetting(path, value){
         const next = {...data, settings: {...data.settings, [path]: value}}
         setData(next)
     }
-
+ 
+    // Берём учителей из данных (data.teachers / initialData.teachers)
+    const teachersFromData = data?.teachers ?? initialData.teachers ?? []
     const stats = {
         total: users.length,
         students: users.filter(u => u.status === 'kid').length,
-        teachers: users.filter(u => u.status === 'teacher').length,
+        teachers: teachersFromData.length,
         parents: users.filter(u => u.status === 'parent').length
     }
-
-    const filteredUsers = users
-        .sort((a, b) => {
-            if(sortBy === 'name') return a.name.localeCompare(b.name)
-            if(sortBy === 'status') return a.status.localeCompare(b.status)
-            if(sortBy === 'class') return (a.clsId || '').localeCompare(b.clsId || '')
-            return 0
-        })
-        .filter(u => 
-            u.name.toLowerCase().includes(search.toLowerCase()) ||
-            u.lastname.toLowerCase().includes(search.toLowerCase())
-        )
-
-    return (
-        <div className={styles.card}>
+ 
+     const filteredUsers = users
+         .sort((a, b) => {
+             if(sortBy === 'name') return a.name.localeCompare(b.name)
+             if(sortBy === 'status') return a.status.localeCompare(b.status)
+             if(sortBy === 'class') return (a.clsId || '').localeCompare(b.clsId || '')
+             return 0
+         })
+         .filter(u => 
+             u.name.toLowerCase().includes(search.toLowerCase()) ||
+             u.lastname.toLowerCase().includes(search.toLowerCase())
+         )
+ 
+     return (
+         <div className={styles.card}>
             <h2 style={{color: '#252B42'}}>Профиль</h2>
 
             <div className={styles.profile}>
@@ -119,20 +121,33 @@ export default function Settings(){
                     </div>
                 </div>
             </div>
-
-            <h2 style={{color: '#252B42'}}>Настройки</h2>
-            <div className={styles.settings}>
-                <label style={{color: '#252B42'}}>
-                    Уроков в день:&nbsp;
-                    <input 
-                        className="input" 
-                        type="number" 
-                        min="1"
-                        max="12"
-                        value={data.settings.periodsPerDay} 
-                        onChange={e=>setSetting('periodsPerDay', Number(e.target.value))} 
-                    />
-                </label>
+ 
+            <h2 style={{color: '#252B42'}}>Учителя (из данных расписания)</h2>
+            <div className={styles.teacherList}>
+                {teachersFromData.map(t => (
+                    <div key={t.id} className={styles.usercard}>
+                        <div style={{padding: 8}}>
+                            <h3 className={styles.username}>{t.name}</h3>
+                            <p className={styles.user}>id: {t.id}</p>
+                            <p className={styles.user}>Предметы: {(t.subjects || []).join(', ')}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
++
+             <h2 style={{color: '#252B42'}}>Настройки</h2>
+             <div className={styles.settings}>
+                 <label style={{color: '#252B42'}}>
+                     Уроков в день:&nbsp;
+                     <input 
+                         className="input" 
+                         type="number" 
+                         min="1"
+                         max="12"
+                         value={data.settings.periodsPerDay} 
+                         onChange={e=>setSetting('periodsPerDay', Number(e.target.value))} 
+                     />
+                 </label>
 
                 <button 
                     className={styles.button} 
@@ -146,7 +161,7 @@ export default function Settings(){
                 >
                     Сбросить значения до стандартных данных
                 </button>
-            </div>
-        </div>
-    )
-}
+             </div>
+         </div>
+     )
+ }
