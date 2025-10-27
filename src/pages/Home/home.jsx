@@ -7,8 +7,8 @@ import { useAuth } from '../../hooks/forlogun'
 
 export default function Home() {
   const { isAuth } = useAuth();
-  const currentUser = users.find(u => u.username === isAuth?.username);
-  const name = currentUser?.name || 'Гость'
+  const currentUser = users.find(u => u.name);
+  const name = currentUser?.name
 
   return (
     <>

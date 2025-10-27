@@ -1,37 +1,178 @@
-.container{
-    display: flex;
-    flex-direction: column;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.header {
+  background: linear-gradient(135deg, #fff, #f8f9fa);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(37,43,66,0.08);
+}
+
+.profile {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255,255,255,0.8);
+  box-shadow: 0 4px 12px rgba(37,43,66,0.12);
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.name {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #252B42;
+}
+
+.class {
+  margin: 8px 0 16px;
+  font-size: 18px;
+  color: #737373;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #ff6b4a;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat {
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(37,43,66,0.05);
+}
+
+.stat h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #737373;
+}
+
+.stat p {
+  margin: 8px 0 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #252B42;
+}
+
+.sectionTitle {
+  margin: 0 0 20px;
+  font-size: 24px;
+  color: #252B42;
+}
+
+.scheduleSection {
+  margin-bottom: 32px;
+}
+
+.scheduleContainer {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(37,43,66,0.08);
+  overflow: hidden;
+}
+
+.classmatesSection {
+  margin-bottom: 32px;
+}
+
+.classmatesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.classmateCard {
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(37,43,66,0.08);
+  transition: transform 0.2s ease;
+}
+
+.classmateCard:hover {
+  transform: translateY(-2px);
+}
+
+.classmateAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
+
+.classmateCard h3 {
+  margin: 0;
+  color: #252B42;
+  font-size: 16px;
+}
+
+.classmateCard p {
+  margin: 4px 0 0;
+  color: #737373;
+  font-size: 14px;
+}
+
+.denied {
+  text-align: center;
+  padding: 48px 24px;
+  color: #252B42;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .header {
     padding: 20px;
-    gap: 10px
-}
-
-.button{
-    padding-inline: 20px;
-    padding-block: 10px;
-    border: 0;
-    border-radius: 5px;
-    background-color: tomato;
-    text-decoration: none;
-    color:white;
-    font-family: "Montserrat", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 500;
-}
-
-.h1{
-    font-family: "Montserrat", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-size: 32px;
-    color: #252B42;
-    margin-bottom: 0;
-}
-
-.p{
-    font-family: "Montserrat", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 500;
-    font-size: 20px;
-    color: #252B42;
-    margin: 0
+  }
+  
+  .profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .name {
+    font-size: 24px;
+  }
+  
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
