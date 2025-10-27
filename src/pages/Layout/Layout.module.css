@@ -56,6 +56,10 @@
     opacity: 0
 }
 
+.button{
+    visibility: hidden;
+}
+
 .footer-content {
     margin: 0 auto;
 }

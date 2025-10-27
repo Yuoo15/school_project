@@ -150,7 +150,7 @@ export function generateAllSchedulesBacktracking({
         // ═══════════════════════════════════════════════════════════
 
         // 1️⃣ КЛАССНЫЙ ЧАС, РЕЛИГИЯ, ГЛОБАЛКИ - ТОЛЬКО В КОНЦЕ ДНЯ
-        const endOfDaySubjects = ['class_hour', 'religion', 'global_comp'];
+        const endOfDaySubjects = ['class_hour', 'religion', 'global_comp', 'culture'];
         if (endOfDaySubjects.includes(subId)) {
           if (p < lessonsPerDay - 2) return false;
         }

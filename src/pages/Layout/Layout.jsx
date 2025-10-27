@@ -21,7 +21,7 @@ export default()=>{
                     <NavLink className={styles.link} to="teachers">Учителя</NavLink>
                     <NavLink className={styles.link} to="subjects">Предметы</NavLink>
                     <NavLink className={styles.link} to="schedule">Расписание</NavLink>
-                    <NavLink className={styles.link} to="settings">Настройки</NavLink>
+                    <NavLink className={styles.link} to="settings">Профиль</NavLink>
                 </nav>
                 <span className={styles.button}><Button text="О проекте"/></span>
                 {windowWidth <= 550 && <BurgerMenu />}

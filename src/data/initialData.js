@@ -30,14 +30,14 @@ export const initialData = {
     { id: 'rus_lit', name: 'Русский язык и литература', hoursPerWeek: 2, difficulty: 'normal' },
     { id: 'kaz_lit', name: 'Казахский язык и литература', hoursPerWeek: 3, difficulty: 'hard' },
     { id: 'hist_kaz', name: 'История Казахстана', hoursPerWeek: 2, difficulty: 'normal' },
-    { id: 'algebra', name: 'Алгебра и начала анализа', hoursPerWeek: 4, difficulty: 'hard' },
+    { id: 'algebra', name: 'Алгебра', hoursPerWeek: 4, difficulty: 'hard' },
     { id: 'geometry', name: 'Геометрия', hoursPerWeek: 3, difficulty: 'hard' },
     { id: 'inf', name: 'Информатика', hoursPerWeek: 2, difficulty: 'normal' }, // ⬅️ снижено с hard
     { id: 'eng', name: 'Английский язык', hoursPerWeek: 3, difficulty: 'normal' }, // ⬅️ снижено с hard
     { id: 'culture', name: 'Физическая культура', hoursPerWeek: 1, difficulty: 'light' },
     { id: 'rus_lit2', name: 'Русская литература', hoursPerWeek: 2, difficulty: 'normal' },
     { id: 'bio', name: 'Биология', hoursPerWeek: 1, difficulty: 'normal' },
-    { id: 'religion', name: 'Религиоведение', hoursPerWeek: 1, difficulty: 'light' },
+    { id: 'religion', name: 'Регионоведение', hoursPerWeek: 1, difficulty: 'light' },
     { id: 'pe', name: 'Физическая культура', hoursPerWeek: 2, difficulty: 'light' },
     { id: 'world_hist', name: 'Всемирная история', hoursPerWeek: 1, difficulty: 'normal' },
     { id: 'geo', name: 'География', hoursPerWeek: 3, difficulty: 'normal' },
