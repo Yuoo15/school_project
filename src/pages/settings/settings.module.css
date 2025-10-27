@@ -130,49 +130,6 @@
     box-shadow: 0 6px 14px rgba(255,107,74,0.08);
 }
 
-@media (max-width: 900px) {
-    .photo{
-        width: 110px;
-        height: 110px;
-    }
-    .profile{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    .card{
-        padding:0 12px;
-        margin: 0px;
-    }
-    .userinfo{
-        flex-direction: row;
-        align-items: center;
-        gap: 10px;
-    }
-    .usercard{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-    }
-    .inf_user{
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-@media (max-width: 420px) {
-    .photo{
-        width: 88px;
-        height: 88px;
-    }
-    .button{
-        padding: 6px 10px;
-        font-size: 13px;
-    }
-    :global(.input){
-        width: 100px;
-    }
-}
-
 .stats {
     display: flex;
     gap: 16px;
@@ -213,14 +170,52 @@
 }
 
 @media (max-width: 900px) {
+    .photo{
+        width: 110px;
+        height: 110px;
+    }
+    .profile{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .card{
+        padding:0 12px;
+        margin: 0px;
+    }
+    .userinfo{
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+    .usercard{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .inf_user{
+        flex-direction: column;
+        align-items: flex-start;
+    }
     .stats {
         overflow-x: auto;
         width: 100%;
         grid-template-columns: repeat(2, 1fr);
     }
 }
-
 @media (max-width: 420px) {
+    .photo{
+        width: 88px;
+        height: 88px;
+    }
+    .button{
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+    :global(.input){
+        width: 100px;
+    }
+
     .stats {
         grid-template-columns: 1fr;
     }
@@ -233,3 +228,5 @@
         height: 32px;
     }
 }
+
+
