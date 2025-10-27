@@ -22,7 +22,7 @@ export default function BurgerMenu() {
             <li className={styles.nav__item}><NavLink style={({isActive})=>isActive ? {fontWeight: "bold", color: '#96BB7C'} : {}} className={styles.link} to="teachers">Учителя</NavLink></li>
             <li className={styles.nav__item}><NavLink style={({isActive})=>isActive ? {fontWeight: "bold", color: '#96BB7C'} : {}} className={styles.link} to="subjects">Предметы</NavLink></li>
             <li className={styles.nav__item}><NavLink style={({isActive})=>isActive ? {fontWeight: "bold", color: '#96BB7C'} : {}} className={styles.link} to="schedule">Расписание</NavLink></li>
-            <li className={styles.nav__item}><NavLink style={({isActive})=>isActive ? {fontWeight: "bold", color: '#96BB7C'} : {}} className={styles.link} to="settings">Настройки</NavLink></li>
+            <li className={styles.nav__item}><NavLink style={({isActive})=>isActive ? {fontWeight: "bold", color: '#96BB7C'} : {}} className={styles.link} to="settings">Профиль</NavLink></li>
         </ul>
     </nav>
 </div>

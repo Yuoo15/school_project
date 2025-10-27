@@ -3,7 +3,6 @@ import { useLocalStorage } from '../../hooks/useLocalStorage'
 import { initialData } from '../../data/initialData'
 import styles from './subjects.module.css'
 import Button from '../../components/Button/button'
-import img from '../../assets/subjects.jpg'
 import Table from '../../components/Table/table'
 
 export default function Subjects(){
