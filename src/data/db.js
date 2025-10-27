@@ -1,13 +1,33 @@
 import photo from '../assets/avatar.jpg'
 export const users = [
     {id: 1, username: "admin", password: "admin123", status: "admin", name: "Рамазан", lastname: "Канатев", clsId: null, avatar: photo},
+    // 11A класс
     {id: 2, username: "Asem", password: "asem1", status: "kid", name: "Асем", lastname: "Иванова", clsId: "11A", avatar: photo},
+    {id: 11, username: "Kira", password: "kira1", status: "kid", name: "Кира", lastname: "Каленова", clsId: "11A", avatar: photo},
+    {id: 12, username: "Azat", password: "azat1", status: "kid", name: "Азат", lastname: "Нурланов", clsId: "11A", avatar: photo},
+    {id: 13, username: "Diana", password: "diana1", status: "kid", name: "Диана", lastname: "Сатова", clsId: "11A", avatar: photo},
+    
+    // 7B класс
     {id: 3, username: "Dastan", password: "dastan1", status: "kid", name: "Дастан", lastname: "Султанов", clsId: "7B", avatar: photo},
     {id: 4, username: "Madi", password: "madi1", status: "kid", name: "Мади", lastname: "Турганбаев", clsId: "7B", avatar: photo},
+    {id: 14, username: "Samal", password: "samal1", status: "kid", name: "Самал", lastname: "Ержанова", clsId: "7B", avatar: photo},
+    {id: 15, username: "Timur", password: "timur1", status: "kid", name: "Тимур", lastname: "Аскаров", clsId: "7B", avatar: photo},
+    
+    // 9C класс
+    {id: 7, username: "Ilyas", password: "ilyas1", status: "kid", name: "Ильяс", lastname: "Жапаров", clsId: "9C", avatar: photo},
+    {id: 16, username: "Amir", password: "amir1", status: "kid", name: "Амир", lastname: "Касымов", clsId: "9C", avatar: photo},
+    {id: 17, username: "Aliya", password: "aliya1", status: "kid", name: "Алия", lastname: "Мусина", clsId: "9C", avatar: photo},
+    
+    // 10A класс
+    {id: 8, username: "Aida", password: "aida22", status: "kid", name: "Аида", lastname: "Байжанова", clsId: "10A", avatar: photo},
+    {id: 18, username: "Boris", password: "boris1", status: "kid", name: "Борис", lastname: "Федоров", clsId: "10A", avatar: photo},
+    {id: 19, username: "Kamila", password: "kamila1", status: "kid", name: "Камила", lastname: "Алиева", clsId: "10A", avatar: photo},
+    
+    // Учителя
     {id: 5, username: "OlgaP", password: "olga2020", status: "teacher", name: "Ольга", lastname: "Петрова", clsId: null, avatar: photo},
     {id: 6, username: "SergeyK", password: "serg123", status: "teacher", name: "Сергей", lastname: "Кузнецов", clsId: null, avatar: photo},
-    {id: 7, username: "Ilyas", password: "ilyas1", status: "kid", name: "Ильяс", lastname: "Жапаров", clsId: "9C", avatar: photo},
-    {id: 8, username: "Aida", password: "aida22", status: "kid", name: "Аида", lastname: "Байжанова", clsId: "10A", avatar: photo},
+    
+    // Родители и гости
     {id: 9, username: "Parent1", password: "parent1", status: "parent", name: "Наталья", lastname: "Смирнова", clsId: null, avatar: photo},
     {id: 10, username: "Guest", password: "guest", status: "guest", name: "Гость", lastname: "", clsId: null, avatar: photo},
 ]

@@ -10,35 +10,88 @@ export default function ScheduleKid() {
   const { isAuth, logout } = useAuth()
   const user = users.find(u => u.username === isAuth?.username)
   const name = user?.name || 'Гость'
+  const lastname = user?.lastname || ''
   const isKid = isAuth?.status === 'kid'
   const [data] = useLocalStorage('school:data', initialData)
 
   if (!isKid) {
-    return <div>Доступ запрещён</div>
+    return (
+      <div className={style.denied}>
+        <h2>Доступ запрещён</h2>
+        <p>Эта страница доступна только для учеников</p>
+        <button className={style.button} onClick={logout}>Вернуться</button>
+      </div>
+    )
   }
 
   const clsId = user?.clsId || null
-  const studentClass = data.classes.find((c) => c.id === clsId)
+  const studentClass = data.classes?.find((c) => c.id === clsId)
+  
+  const classmates = users.filter(u => 
+    u.status === 'kid' && 
+    u.clsId === user.clsId && 
+    u.id !== user.id
+  )
 
   return (
     <div className={style.container}>
-      <h1 className={style.h1}>Расписание для ученика</h1>
-      <p className={style.p}>Здравствуйте, {name}!</p>
-      <p className={style.p}>Ваш класс: {studentClass?.id || 'не найден'}</p>
+      <div className={style.header}>
+        <div className={style.profile}>
+          <img src={user.avatar} alt={name} className={style.avatar} />
+          <div className={style.userInfo}>
+            <h1 className={style.name}>{name} {lastname}</h1>
+            <p className={style.class}>Класс: {studentClass?.id || 'Не назначен'}</p>
+            <button className={style.button} onClick={logout}>Выйти</button>
+          </div>
+        </div>
 
-      <button className={style.button} onClick={() => logout(() => {})}>Выйти</button>
+        <div className={style.stats}>
+          <div className={style.stat}>
+            <h3>Предметов</h3>
+            <p>{data.subjects?.length || 0}</p>
+          </div>
+          <div className={style.stat}>
+            <h3>Одноклассников</h3>
+            <p>{classmates.length}</p>
+          </div>
+          <div className={style.stat}>
+            <h3>Учителей</h3>
+            <p>{data.teachers?.length || 0}</p>
+          </div>
+        </div>
+      </div>
 
       {studentClass && (
-        <ScheduleGrid
-          key={studentClass.id}
-          clsId={studentClass.id}
-          schedule={data.schedule}
-          setSchedule={null}
-          subjects={data.subjects}
-          teachers={data.teachers}
-          settings={data.settings}
-          isAdmin={false}
-        />
+        <div className={style.scheduleSection}>
+          <h2 className={style.sectionTitle}>Ваше расписание</h2>
+          <div className={style.scheduleContainer}>
+            <ScheduleGrid
+              key={studentClass.id}
+              clsId={studentClass.id}
+              schedule={data.schedule}
+              setSchedule={null}
+              subjects={data.subjects}
+              teachers={data.teachers}
+              settings={data.settings}
+              isAdmin={false}
+            />
+          </div>
+        </div>
+      )}
+
+      {classmates.length > 0 && (
+        <div className={style.classmatesSection}>
+          <h2 className={style.sectionTitle}>Ваши одноклассники</h2>
+          <div className={style.classmatesGrid}>
+            {classmates.map(mate => (
+              <div key={mate.id} className={style.classmateCard}>
+                <img src={mate.avatar} alt="" className={style.classmateAvatar} />
+                <h3>{mate.name}</h3>
+                <p>{mate.lastname}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   )
