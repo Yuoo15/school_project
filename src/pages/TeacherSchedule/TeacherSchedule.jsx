@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useStorage } from '../../hooks/useStorage'
 import { initialData } from '../../data/initialData'
 import { useAuth } from '../../hooks/forlogun'
-import styles from './teacherSchedule.module.css'
+import styles from './TeacherSchedule.module.css'
 
 export default function TeacherSchedule() {
 
