@@ -14,3 +14,12 @@
     background-color: #96BB7C;
     color:white
 }
+
+.scheduleContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-block: 20px;
+    justify-content: center;
+    align-items: center;
+}

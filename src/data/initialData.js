@@ -1,7 +1,9 @@
 export const initialData = {
   classes: [
     { id: '11A', name: '11А' },
-    { id: '7B', name: '7Б' }
+    { id: '11B', name: '11Б' },
+    { id: '7B', name: '7Б' },
+    { id: '7A', name: '7A' }
   ],
 
   teachers: [
@@ -32,8 +34,8 @@ export const initialData = {
     { id: 'hist_kaz', name: 'История Казахстана', hoursPerWeek: 2, difficulty: 'normal' },
     { id: 'algebra', name: 'Алгебра', hoursPerWeek: 4, difficulty: 'hard' },
     { id: 'geometry', name: 'Геометрия', hoursPerWeek: 3, difficulty: 'hard' },
-    { id: 'inf', name: 'Информатика', hoursPerWeek: 2, difficulty: 'normal' }, // ⬅️ снижено с hard
-    { id: 'eng', name: 'Английский язык', hoursPerWeek: 3, difficulty: 'normal' }, // ⬅️ снижено с hard
+    { id: 'inf', name: 'Информатика', hoursPerWeek: 2, difficulty: 'normal' }, 
+    { id: 'eng', name: 'Английский язык', hoursPerWeek: 3, difficulty: 'normal' },
     { id: 'culture', name: 'Физическая культура', hoursPerWeek: 1, difficulty: 'light' },
     { id: 'rus_lit2', name: 'Русская литература', hoursPerWeek: 2, difficulty: 'normal' },
     { id: 'bio', name: 'Биология', hoursPerWeek: 1, difficulty: 'normal' },

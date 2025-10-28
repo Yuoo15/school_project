@@ -1,8 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
   min-height: 100vh;
+  font-family: "Montserrat", sans-serif;
 }
 
 .header {
@@ -24,8 +27,8 @@
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid rgba(255,255,255,0.8);
-  box-shadow: 0 4px 12px rgba(37,43,66,0.12);
+  border: 4px solid #96BB7C;
+  box-shadow: 0 4px 12px rgba(150, 187, 124, 0.3);
 }
 
 .userInfo {
@@ -37,6 +40,7 @@
   font-size: 32px;
   font-weight: 700;
   color: #252B42;
+  font-family: "Montserrat", sans-serif;
 }
 
 .class {
@@ -49,11 +53,18 @@
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
-  background: #ff6b4a;
+  background: #96BB7C;
   color: white;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+}
+
+.button:hover {
+  background: #7a9e64;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(150, 187, 124, 0.3);
 }
 
 .stats {
@@ -68,12 +79,20 @@
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 2px 8px rgba(37,43,66,0.05);
+  border-top: 3px solid #96BB7C;
+  transition: transform 0.2s ease;
+}
+
+.stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(150, 187, 124, 0.2);
 }
 
 .stat h3 {
   margin: 0;
   font-size: 14px;
   color: #737373;
+  font-family: "Montserrat", sans-serif;
 }
 
 .stat p {
@@ -87,6 +106,8 @@
   margin: 0 0 20px;
   font-size: 24px;
   color: #252B42;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
 }
 
 .scheduleSection {
@@ -98,6 +119,7 @@
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(37,43,66,0.08);
   overflow: hidden;
+  border-top: 4px solid #96BB7C;
 }
 
 .classmatesSection {
@@ -116,11 +138,14 @@
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(37,43,66,0.08);
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-bottom: 3px solid transparent;
 }
 
 .classmateCard:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(150, 187, 124, 0.2);
+  border-bottom-color: #96BB7C;
 }
 
 .classmateAvatar {
@@ -128,12 +153,16 @@
   height: 80px;
   border-radius: 50%;
   margin-bottom: 12px;
+  border: 3px solid #96BB7C;
+  object-fit: cover;
 }
 
 .classmateCard h3 {
   margin: 0;
   color: #252B42;
   font-size: 16px;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
 }
 
 .classmateCard p {
@@ -146,6 +175,7 @@
   text-align: center;
   padding: 48px 24px;
   color: #252B42;
+  font-family: "Montserrat", sans-serif;
 }
 
 @media (max-width: 768px) {
