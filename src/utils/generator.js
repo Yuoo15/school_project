@@ -1,3 +1,4 @@
+//с генератором мне помог ии
 function shuffleArray(arr) {
   const a = [...(arr || [])];
   for (let i = a.length - 1; i > 0; i--) {
@@ -13,30 +14,37 @@ export function generateAllSchedulesBacktracking({
   teachers = [],
   settings = {},
   timeLimitMs = 60000,
-  maxAttempts = 10000,
+  maxAttempts = 100000,
 } = {}) {
   const start = Date.now();
 
-  // ЖЕСТКО ФИКСИРУЕМ 5 ДНЕЙ
   const DAYS = 5;
   const periods = Number(settings?.periodsPerDay ?? 8);
-  const maxSameSubjectPerDay = 3;
 
-  console.log(`\n🎯 ГЕНЕРАЦИЯ: ${DAYS} дней × ${periods} уроков`);
-  console.log(`📚 Классов: ${classes.length}, Учителей: ${teachers.length}`);
-  console.log(`💡 Применяются правила здорового расписания`);
-  console.log(`📋 НВП - только старшая школа, Право - только 9-11 классы`);
+  console.log(`\n🎯 ГЕНЕРАЦИЯ С ГРУППИРОВКОЙ ПРЕДМЕТОВ`);
+  console.log(`📚 Классов: ${classes.length}, Учителей: ${teachers.length}\n`);
 
   const bySubject = Object.fromEntries((subjects || []).map(s => [s.id, s]));
   const teacherMap = Object.fromEntries((teachers || []).map(t => [t.id, t]));
 
-  function timedOut() {
-    return Date.now() - start > timeLimitMs;
-  }
-
   const teachersBySubject = {};
   for (const s of subjects) {
     teachersBySubject[s.id] = teachers.filter(t => t.subjects?.includes(s.id));
+  }
+
+  // 🆕 ГРУППЫ ПРЕДМЕТОВ
+  const subjectGroups = {
+    math: ['algebra', 'geometry'],
+    physed: ['culture', 'pe'],
+    languages: ['rus', 'rus_lit', 'rus_lit2', 'kaz_lit', 'eng'],
+    endOfDay: ['class_hour', 'religion', 'global_comp']
+  };
+
+  function getSubjectGroup(subjectId) {
+    for (const [group, subjects] of Object.entries(subjectGroups)) {
+      if (subjects.includes(subjectId)) return group;
+    }
+    return null;
   }
 
   function getClassLevel(classId) {
@@ -58,54 +66,25 @@ export function generateAllSchedulesBacktracking({
     return Number(h) || 0;
   }
 
-  // КАТЕГОРИИ ПРЕДМЕТОВ для умного размещения
-  function getSubjectType(subId) {
-    const mental = ['algebra', 'geometry', 'kaz_lit', 'chemistry', 'physics'];
-    const active = ['pe', 'culture'];
-    const creative = ['art', 'music', 'tech'];
-    const moderate = ['eng', 'rus', 'rus_lit', 'hist_kaz', 'world_hist', 'geo', 'bio', 'inf'];
-    const relaxing = ['religion', 'global_comp', 'class_hour', 'law'];
+  // ФАЗА 1: Базовое размещение
+  function generateBase() {
+    console.log(`⚡ ФАЗА 1: Базовое размещение`);
     
-    if (mental.includes(subId)) return 'mental';
-    if (active.includes(subId)) return 'active';
-    if (creative.includes(subId)) return 'creative';
-    if (moderate.includes(subId)) return 'moderate';
-    if (relaxing.includes(subId)) return 'relaxing';
-    return 'moderate';
-  }
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (timedOut()) break;
-    console.log(`🔄 Попытка ${attempt + 1}/${maxAttempts}...`);
-
     const teacherOccupied = {};
     teachers.forEach(t => {
       teacherOccupied[t.id] = Array.from({ length: DAYS }, () => Array(periods).fill(false));
     });
 
     const result = {};
-    let globalFail = false;
 
-    const classOrder = attempt < 3 ? classes : shuffleArray([...classes]);
-
-    for (const cls of classOrder) {
-      if (timedOut()) {
-        globalFail = true;
-        break;
-      }
-
+    for (const cls of classes) {
       const classId = cls.id;
       const classLevel = getClassLevel(classId);
       const lessonsPerDay = Number(cls?.lessonsPerDay ?? 7);
 
-      // Определяем предметы для класса
       const subjectsForClass = subjects.filter(s => {
-        // НВП только для старших (не для middle school)
         if (classLevel === 'middle' && s.id === 'nvp') return false;
-        
-        // Основы права только для 9-11 классов (не для 7-8)
         if (classLevel !== 'senior' && s.id === 'law') return false;
-        
         return hoursForClass(s, classId) > 0;
       });
 
@@ -118,338 +97,355 @@ export function generateAllSchedulesBacktracking({
       
       if (totalRequired === 0) {
         result[classId] = Array.from({ length: DAYS }, () => Array(periods).fill(null));
-        console.log(`✓ Класс ${cls.name}: нет предметов`);
         continue;
       }
 
-      const maxSlots = DAYS * lessonsPerDay;
-      if (totalRequired > maxSlots) {
-        console.warn(`❌ Класс ${cls.name}: нужно ${totalRequired} уроков, есть только ${maxSlots} слотов`);
-        globalFail = true;
-        break;
+      if (totalRequired > DAYS * periods) {
+        return null;
       }
 
-      // Создаём сетку СТРОГО на DAYS дней
       const grid = Array.from({ length: DAYS }, () => Array(periods).fill(null));
-      const perDayCount = Array(DAYS).fill(0);
       const perDaySubject = Array.from({ length: DAYS }, () => ({}));
+      const perDayGroup = Array.from({ length: DAYS }, () => ({})); // 🆕 счётчик групп
 
-      function canPlace(subId, teacherId, d, p) {
+      function canPlaceBase(subId, teacherId, d, p) {
         if (!subId || !teacherId) return false;
         if (remaining[subId] <= 0) return false;
-        if (perDayCount[d] >= lessonsPerDay) return false;
         if (!teacherMap[teacherId]?.subjects?.includes(subId)) return false;
         if (teacherOccupied[teacherId]?.[d]?.[p]) return false;
         if (grid[d][p]) return false;
-
-        const diff = bySubject[subId]?.difficulty;
-        const type = getSubjectType(subId);
-
-        // ═══════════════════════════════════════════════════════════
-        // ПРАВИЛА ДЛЯ ЗДОРОВОГО И ЭФФЕКТИВНОГО ОБУЧЕНИЯ
-        // ═══════════════════════════════════════════════════════════
-
-        // 1️⃣ КЛАССНЫЙ ЧАС, РЕЛИГИЯ, ГЛОБАЛКИ - ТОЛЬКО В КОНЦЕ ДНЯ
-        const endOfDaySubjects = ['class_hour', 'religion', 'global_comp', 'culture'];
-        if (endOfDaySubjects.includes(subId)) {
-          if (p < lessonsPerDay - 2) return false;
-        }
-
-        // 2️⃣ НА ПОСЛЕДНИХ УРОКАХ НЕ ДОЛЖНО БЫТЬ СЛОЖНЫХ ПРЕДМЕТОВ
-        if (p >= lessonsPerDay - 2 && diff === 'hard') {
-          const hasLightToPlace = Object.keys(remaining).some(sid => 
-            remaining[sid] > 0 && 
-            (bySubject[sid]?.difficulty === 'light' || endOfDaySubjects.includes(sid))
-          );
-          if (hasLightToPlace) return false;
-        }
-
-        // 3️⃣ ПЕРВЫЙ УРОК - НЕ САМЫЙ СЛОЖНЫЙ (дети просыпаются)
-        if (p === 0 && diff === 'hard') {
-          const hasModerateToPlace = Object.keys(remaining).some(sid => 
-            remaining[sid] > 0 && bySubject[sid]?.difficulty !== 'hard'
-          );
-          if (hasModerateToPlace && Math.random() > 0.3) return false; // 70% шанс избежать
-        }
-
-        // 4️⃣ КОНТРОЛЬНЫЕ ТОЧКИ: 2-3 урок - ПИКОВАЯ КОНЦЕНТРАЦИЯ
-        // Hard предметы лучше на 2-4 уроках
-        if (diff === 'hard' && (p === 1 || p === 2 || p === 3)) {
-          // Бонус - эти позиции приоритетны для hard
-        }
-
-        // 5️⃣ ЧЕРЕДОВАНИЕ НАГРУЗКИ - после mental должен быть перерыв
-        if (p > 0) {
-          const prev = grid[d][p - 1];
-          if (prev) {
-            const prevType = getSubjectType(prev.subjectId);
-            const prevDiff = bySubject[prev.subjectId]?.difficulty;
-
-            // После mental/hard - желательно active/creative/moderate
-            if (prevType === 'mental' && type === 'mental') {
-              // Два mental подряд - плохо
-              const hasNonMentalOption = Object.keys(remaining).some(sid => 
-                remaining[sid] > 0 && getSubjectType(sid) !== 'mental'
-              );
-              if (hasNonMentalOption && Math.random() > 0.4) return false;
-            }
-
-            // После физкультуры не должно быть сразу контрольной
-            if (prevType === 'active' && type === 'mental') {
-              if (Math.random() > 0.6) return false; // 40% шанс
-            }
+        
+        // ❌ Два одинаковых предмета подряд
+        if (p > 0 && grid[d][p - 1]?.subjectId === subId) return false;
+        
+        // 🆕 ❌ Два предмета из одной группы подряд
+        const group = getSubjectGroup(subId);
+        if (group && p > 0) {
+          const prevLesson = grid[d][p - 1];
+          if (prevLesson && getSubjectGroup(prevLesson.subjectId) === group) {
+            return false;
           }
         }
+        
+        // ❌ Больше 3 уроков одного предмета в день
+        const countToday = perDaySubject[d][subId] || 0;
+        if (countToday >= 3) return false;
 
-        // 6️⃣ ДВА ОДИНАКОВЫХ ПРЕДМЕТА ПОДРЯД - ЗАПРЕЩЕНО
-        if (p > 0 && grid[d][p - 1]?.subjectId === subId) return false;
+        // 🆕 ❌ Больше 3 уроков одной группы в день (математика!)
+        if (group) {
+          const groupCountToday = perDayGroup[d][group] || 0;
+          if (groupCountToday >= 3) return false;
+        }
 
-        // 7️⃣ ФИЗКУЛЬТУРА - ТОЛЬКО 1 РАЗ В ДЕНЬ
+        // ❌ Физ-ра: только 1 урок в день
         const physEd = ['culture', 'pe'];
         if (physEd.includes(subId)) {
           const physCount = grid[d].filter(c => c && physEd.includes(c.subjectId)).length;
           if (physCount >= 1) return false;
         }
 
-        // 8️⃣ ОДИН ПРЕДМЕТ - НЕ БОЛЕЕ 3 РАЗ В ДЕНЬ
-        const countToday = perDaySubject[d][subId] || 0;
-        if (countToday >= maxSameSubjectPerDay) return false;
-
-        // 9️⃣ HARD ПРЕДМЕТЫ - МАКСИМУМ 3 В ДЕНЬ
-        if (diff === 'hard') {
-          const hardCount = grid[d].filter(c => c && bySubject[c.subjectId]?.difficulty === 'hard').length;
-          if (hardCount >= 3) return false;
-        }
-
-        // 🔟 ПЯТНИЦА - ЛЕГЧЕ ДНЯ (снижаем нагрузку к концу недели)
-        if (d === 4) { // Пятница
-          if (diff === 'hard') {
-            const hardCountFriday = grid[4].filter(c => c && bySubject[c.subjectId]?.difficulty === 'hard').length;
-            if (hardCountFriday >= 2) return false; // В пятницу максимум 2 hard
-          }
-        }
-
-        // 1️⃣1️⃣ ПОНЕДЕЛЬНИК - МЯГКИЙ СТАРТ (не перегружаем)
-        if (d === 0) { // Понедельник
-          if (diff === 'hard') {
-            const hardCountMonday = grid[0].filter(c => c && bySubject[c.subjectId]?.difficulty === 'hard').length;
-            if (hardCountMonday >= 2 && p < 3) return false; // Первые уроки понедельника - легче
-          }
-        }
-
-        // 1️⃣2️⃣ СРЕДА - СЕРЕДИНА НЕДЕЛИ (можно нагрузить)
-        if (d === 2 && diff === 'hard') {
-          // В среду разрешаем больше hard - это норм
-        }
-
-        // 1️⃣3️⃣ ТРИ HARD ПОДРЯД - КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО
-        if (diff === 'hard' && p > 1) {
-          const prev1 = grid[d][p - 1];
-          const prev2 = grid[d][p - 2];
-          if (prev1 && prev2) {
-            const d1 = bySubject[prev1.subjectId]?.difficulty;
-            const d2 = bySubject[prev2.subjectId]?.difficulty;
-            if (d1 === 'hard' && d2 === 'hard') return false;
-          }
-        }
-
-        // 1️⃣4️⃣ БАЛАНС ПО НЕДЕЛЕ - не все hard в одни дни
-        const hardByDay = [];
-        for (let day = 0; day < DAYS; day++) {
-          const count = grid[day].filter(c => c && bySubject[c.subjectId]?.difficulty === 'hard').length;
-          hardByDay.push(count);
-        }
-        
-        if (diff === 'hard') {
-          const currentHardCount = hardByDay[d];
-          const avgHard = hardByDay.reduce((a, b) => a + b, 0) / DAYS;
-          // Не даём одному дню стать слишком тяжелым по сравнению с другими
-          if (currentHardCount > avgHard + 1.5) return false;
-        }
-
         return true;
       }
 
-      // УМНАЯ СТРАТЕГИЯ: сначала основные предметы, потом "конечные"
-      let success = true;
-      
-      for (let d = 0; d < DAYS; d++) {
-        // ЭТАП 1: Заполняем основную часть дня (кроме последних 2 уроков)
-        const mainPartEnd = Math.max(1, lessonsPerDay - 2);
-        
-        for (let p = 0; p < mainPartEnd; p++) {
-          if (timedOut()) {
-            success = false;
-            break;
-          }
+      let allSubjects = [];
+      for (const sid of Object.keys(remaining)) {
+        for (let i = 0; i < remaining[sid]; i++) {
+          allSubjects.push(sid);
+        }
+      }
+      allSubjects = shuffleArray(allSubjects);
 
-          // Сортируем: hard и normal предметы в приоритете
-          const subjectsToPlace = Object.keys(remaining)
-            .filter(sid => {
-              if (remaining[sid] <= 0) return false;
-              // Исключаем "конечные" предметы на этом этапе
-              const endOfDay = ['class_hour', 'religion', 'global_comp'];
-              return !endOfDay.includes(sid);
-            })
-            .sort((a, b) => {
-              const rA = remaining[a];
-              const rB = remaining[b];
-              const dA = bySubject[a]?.difficulty === 'hard' ? 3 : 
-                        (bySubject[a]?.difficulty === 'normal' ? 2 : 1);
-              const dB = bySubject[b]?.difficulty === 'hard' ? 3 : 
-                        (bySubject[b]?.difficulty === 'normal' ? 2 : 1);
-              return (rB * dB) - (rA * dA);
-            });
-
-          let placed = false;
-          
-          for (const sid of subjectsToPlace) {
-            const possTeachers = teachersBySubject[sid] || [];
-            if (!possTeachers.length) continue;
-
-            const teacherOrder = attempt % 2 === 0 ? possTeachers : shuffleArray([...possTeachers]);
-
-            for (const t of teacherOrder) {
-              if (canPlace(sid, t.id, d, p)) {
+      for (let d = 0; d < DAYS && allSubjects.length > 0; d++) {
+        for (let p = 0; p < periods && allSubjects.length > 0; p++) {
+          for (let i = 0; i < allSubjects.length; i++) {
+            const sid = allSubjects[i];
+            const possTeachers = shuffleArray([...(teachersBySubject[sid] || [])]);
+            
+            let placedHere = false;
+            for (const t of possTeachers) {
+              if (canPlaceBase(sid, t.id, d, p)) {
                 grid[d][p] = { subjectId: sid, teacherId: t.id };
-                remaining[sid]--;
                 teacherOccupied[t.id][d][p] = true;
-                perDayCount[d]++;
                 perDaySubject[d][sid] = (perDaySubject[d][sid] || 0) + 1;
-                placed = true;
+                
+                // 🆕 Обновляем счётчик группы
+                const group = getSubjectGroup(sid);
+                if (group) {
+                  perDayGroup[d][group] = (perDayGroup[d][group] || 0) + 1;
+                }
+                
+                allSubjects.splice(i, 1);
+                placedHere = true;
                 break;
               }
             }
-            
-            if (placed) break;
+            if (placedHere) break;
           }
         }
-        
-        // ЭТАП 2: Заполняем конец дня (последние 2 урока) - сначала особые предметы
-        for (let p = mainPartEnd; p < periods && perDayCount[d] < lessonsPerDay; p++) {
-          if (timedOut()) {
-            success = false;
-            break;
-          }
-
-          // Приоритет: class_hour, religion, global_comp, потом light, потом остальные
-          const endOfDaySubjects = ['class_hour', 'religion', 'global_comp'];
-          
-          const subjectsToPlace = Object.keys(remaining)
-            .filter(sid => remaining[sid] > 0)
-            .sort((a, b) => {
-              const isEndA = endOfDaySubjects.includes(a);
-              const isEndB = endOfDaySubjects.includes(b);
-              
-              if (isEndA && !isEndB) return -1; // class_hour и т.д. в приоритете
-              if (!isEndA && isEndB) return 1;
-              
-              // Потом light предметы
-              const diffA = bySubject[a]?.difficulty;
-              const diffB = bySubject[b]?.difficulty;
-              
-              if (diffA === 'light' && diffB !== 'light') return -1;
-              if (diffA !== 'light' && diffB === 'light') return 1;
-              
-              // Остальные по количеству
-              return remaining[b] - remaining[a];
-            });
-
-          let placed = false;
-          
-          for (const sid of subjectsToPlace) {
-            const possTeachers = teachersBySubject[sid] || [];
-            if (!possTeachers.length) continue;
-
-            const teacherOrder = attempt % 2 === 0 ? possTeachers : shuffleArray([...possTeachers]);
-
-            for (const t of teacherOrder) {
-              if (canPlace(sid, t.id, d, p)) {
-                grid[d][p] = { subjectId: sid, teacherId: t.id };
-                remaining[sid]--;
-                teacherOccupied[t.id][d][p] = true;
-                perDayCount[d]++;
-                perDaySubject[d][sid] = (perDaySubject[d][sid] || 0) + 1;
-                placed = true;
-                break;
-              }
-            }
-            
-            if (placed) break;
-          }
-        }
-        
-        if (!success) break;
       }
 
-      const totalRemaining = Object.values(remaining).reduce((a, b) => a + b, 0);
-      
-      if (totalRemaining > 0) {
-        console.log(`❌ Класс ${cls.name}: не размещено ${totalRemaining} уроков`);
-        const notPlaced = Object.entries(remaining)
-          .filter(([_, v]) => v > 0)
-          .map(([k, v]) => `${bySubject[k]?.name} (${v})`);
-        console.log(`   📋 Остались: ${notPlaced.join(', ')}`);
-        globalFail = true;
-        break;
+      if (allSubjects.length > 0) {
+        return null;
       }
 
       result[classId] = grid;
-      console.log(`✅ Класс ${cls.name} - готово!`);
     }
 
-    if (!globalFail) {
-      console.log(`\n🎉 УСПЕХ за ${attempt + 1} попыток(и) (${Math.round((Date.now() - start) / 1000)}с)`);
+    return result;
+  }
+
+  // ФАЗА 2: Агрессивная оптимизация
+  function aggressiveOptimize(schedule) {
+    console.log(`\n🔥 ФАЗА 2: АГРЕССИВНАЯ оптимизация`);
+    
+    let totalSwaps = 0;
+    
+    for (const cls of classes) {
+      const grid = schedule[cls.id];
+      if (!grid) continue;
       
-      // СТАТИСТИКА РАСПИСАНИЯ
-      console.log('\n📊 Статистика расписания:');
-      for (const cls of classes) {
-        const grid = result[cls.id];
-        if (!grid) continue;
-        
-        let totalHard = 0;
-        let hardByDay = [];
-        
-        for (let d = 0; d < DAYS; d++) {
-          const hardCount = grid[d].filter(c => c && bySubject[c.subjectId]?.difficulty === 'hard').length;
-          totalHard += hardCount;
-          hardByDay.push(hardCount);
-        }
-        
-        console.log(`   ${cls.name}:`);
-        console.log(`     - Сложных предметов в неделю: ${totalHard}`);
-        console.log(`     - По дням: Пн=${hardByDay[0]}, Вт=${hardByDay[1]}, Ср=${hardByDay[2]}, Чт=${hardByDay[3]}, Пт=${hardByDay[4]}`);
-        
-        // Проверяем баланс
-        const maxHard = Math.max(...hardByDay);
-        const minHard = Math.min(...hardByDay);
-        if (maxHard - minHard <= 1) {
-          console.log(`     ✅ Нагрузка равномерно распределена`);
-        } else if (maxHard - minHard <= 2) {
-          console.log(`     ⚠️ Нагрузка немного неравномерна`);
-        } else {
-          console.log(`     ⚠️ Нагрузка неравномерна - требуется коррекция`);
+      const lessonsPerDay = Number(cls?.lessonsPerDay ?? 7);
+      
+      // ШАГ 1: Физ-ра в конец дня
+      for (let d = 0; d < DAYS; d++) {
+        for (let p = 0; p < lessonsPerDay - 2; p++) {
+          const lesson = grid[d][p];
+          if (!lesson) continue;
+          
+          const physEd = ['culture', 'pe'];
+          if (physEd.includes(lesson.subjectId)) {
+            for (let p2 = lessonsPerDay - 1; p2 >= lessonsPerDay - 2; p2--) {
+              const other = grid[d][p2];
+              if (other && !physEd.includes(other.subjectId)) {
+                if (canSwap(schedule, cls.id, d, p, d, p2)) {
+                  [grid[d][p], grid[d][p2]] = [grid[d][p2], grid[d][p]];
+                  totalSwaps++;
+                  break;
+                }
+              }
+            }
+          }
         }
       }
       
-      console.log('\n✨ Применены правила здорового обучения:');
-      console.log('   ✓ Классный час в конце дня');
-      console.log('   ✓ Пик нагрузки на 2-4 уроках');
-      console.log('   ✓ Легкая пятница (макс 2 hard)');
-      console.log('   ✓ Мягкий понедельник');
-      console.log('   ✓ Чередование mental и active предметов');
-      console.log('   ✓ Физкультура 1 раз в день');
-      console.log('   ✓ Равномерное распределение нагрузки');
+      // ШАГ 2: Сложные предметы из конца в середину
+      for (let d = 0; d < DAYS; d++) {
+        for (let p = lessonsPerDay - 2; p < periods; p++) {
+          const lesson = grid[d][p];
+          if (!lesson) continue;
+          
+          const diff = bySubject[lesson.subjectId]?.difficulty;
+          if (diff === 'hard') {
+            for (let p2 = 1; p2 < lessonsPerDay - 2; p2++) {
+              const other = grid[d][p2];
+              if (other && bySubject[other.subjectId]?.difficulty !== 'hard') {
+                if (canSwap(schedule, cls.id, d, p, d, p2)) {
+                  [grid[d][p], grid[d][p2]] = [grid[d][p2], grid[d][p]];
+                  totalSwaps++;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
       
-      return result;
+      // ШАГ 3: Классный час в конец
+      for (let d = 0; d < DAYS; d++) {
+        for (let p = 0; p < lessonsPerDay - 2; p++) {
+          const lesson = grid[d][p];
+          if (!lesson) continue;
+          
+          const endOfDay = ['class_hour', 'religion', 'global_comp'];
+          if (endOfDay.includes(lesson.subjectId)) {
+            for (let p2 = lessonsPerDay - 2; p2 < periods; p2++) {
+              const other = grid[d][p2];
+              if (other && !endOfDay.includes(other.subjectId)) {
+                if (canSwap(schedule, cls.id, d, p, d, p2)) {
+                  [grid[d][p], grid[d][p2]] = [grid[d][p2], grid[d][p]];
+                  totalSwaps++;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    console.log(`✨ Сделано замен: ${totalSwaps}`);
+  }
+
+  function canSwap(schedule, classId, d1, p1, d2, p2) {
+    const grid = schedule[classId];
+    const lesson1 = grid[d1][p1];
+    const lesson2 = grid[d2][p2];
+    
+    if (!lesson1 || !lesson2) return false;
+
+    // Проверка занятости учителей
+    for (const cls of classes) {
+      if (cls.id === classId) continue;
+      const otherGrid = schedule[cls.id];
+      if (!otherGrid) continue;
+
+      if (otherGrid[d2]?.[p2]?.teacherId === lesson1.teacherId) return false;
+      if (otherGrid[d1]?.[p1]?.teacherId === lesson2.teacherId) return false;
+    }
+
+    // ❌ Два одинаковых предмета подряд
+    if (p1 > 0 && grid[d1][p1-1]?.subjectId === lesson2.subjectId) return false;
+    if (p1 < periods-1 && grid[d1][p1+1]?.subjectId === lesson2.subjectId) return false;
+    if (p2 > 0 && grid[d2][p2-1]?.subjectId === lesson1.subjectId) return false;
+    if (p2 < periods-1 && grid[d2][p2+1]?.subjectId === lesson1.subjectId) return false;
+
+    // 🆕 ❌ Два предмета из одной группы подряд
+    const group1 = getSubjectGroup(lesson1.subjectId);
+    const group2 = getSubjectGroup(lesson2.subjectId);
+    
+    if (group2 && p1 > 0) {
+      const prev = grid[d1][p1-1];
+      if (prev && getSubjectGroup(prev.subjectId) === group2) return false;
+    }
+    if (group2 && p1 < periods-1) {
+      const next = grid[d1][p1+1];
+      if (next && getSubjectGroup(next.subjectId) === group2) return false;
+    }
+    if (group1 && p2 > 0) {
+      const prev = grid[d2][p2-1];
+      if (prev && getSubjectGroup(prev.subjectId) === group1) return false;
+    }
+    if (group1 && p2 < periods-1) {
+      const next = grid[d2][p2+1];
+      if (next && getSubjectGroup(next.subjectId) === group1) return false;
+    }
+
+    return true;
+  }
+
+  // ФАЗА 3: Оценка качества
+  function evaluateQuality(schedule) {
+    console.log(`\n📊 ФАЗА 3: Оценка качества`);
+    
+    let totalScore = 0;
+    
+    for (const cls of classes) {
+      const grid = schedule[cls.id];
+      if (!grid) continue;
+
+      const lessonsPerDay = Number(cls?.lessonsPerDay ?? 7);
+      let violations = 0;
+      let criticalViolations = 0;
+
+      for (let d = 0; d < DAYS; d++) {
+        for (let p = 0; p < lessonsPerDay; p++) {
+          const lesson = grid[d][p];
+          if (!lesson) continue;
+
+          const diff = bySubject[lesson.subjectId]?.difficulty;
+          
+          // Критические нарушения
+          if (p >= lessonsPerDay - 2 && diff === 'hard') {
+            violations += 3;
+            criticalViolations++;
+          }
+          
+          const physEd = ['culture', 'pe'];
+          if (physEd.includes(lesson.subjectId) && p < lessonsPerDay - 2) {
+            violations += 3;
+            criticalViolations++;
+          }
+          
+          // 🆕 Два урока математики подряд
+          if (p > 0) {
+            const prev = grid[d][p-1];
+            if (prev) {
+              const group = getSubjectGroup(lesson.subjectId);
+              const prevGroup = getSubjectGroup(prev.subjectId);
+              if (group && group === prevGroup && group === 'math') {
+                violations += 2;
+                criticalViolations++;
+              }
+            }
+          }
+          
+          // Средние нарушения
+          if (p === lessonsPerDay - 1 && diff === 'normal') violations += 1;
+          
+          const endOfDay = ['class_hour', 'religion', 'global_comp'];
+          if (endOfDay.includes(lesson.subjectId) && p < lessonsPerDay - 2) {
+            violations += 1;
+          }
+        }
+      }
+
+      const score = Math.max(0, 100 - violations * 5);
+      totalScore += score;
+      
+      let emoji = '✅';
+      if (criticalViolations > 0) emoji = '❌';
+      else if (score < 80) emoji = '⚠️';
+      
+      console.log(`   ${emoji} ${cls.name}: ${score}/100 (критических: ${criticalViolations})`);
+    }
+
+    const avgScore = Math.round(totalScore / classes.length);
+    return { avgScore, totalScore };
+  }
+
+  // ОСНОВНОЙ ЦИКЛ
+  let bestSchedule = null;
+  let bestScore = 0;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (Date.now() - start > timeLimitMs) break;
+
+    console.log(`\n━━━ ПОПЫТКА ${attempt + 1}/${maxAttempts} ━━━`);
+
+    const base = generateBase();
+    if (!base) {
+      console.log(`❌ Не удалось составить базу`);
+      continue;
+    }
+
+    aggressiveOptimize(base);
+    const { avgScore, totalScore } = evaluateQuality(base);
+
+    if (avgScore > bestScore) {
+      bestScore = avgScore;
+      bestSchedule = base;
+      console.log(`\n🏆 НОВЫЙ ЛУЧШИЙ РЕЗУЛЬТАТ: ${avgScore}/100`);
+    }
+
+    if (avgScore >= 95) {
+      console.log(`\n🎉 ИДЕАЛЬНОЕ РАСПИСАНИЕ!`);
+      break;
+    }
+
+    if (avgScore >= 85 && attempt >= 10) {
+      console.log(`\n✅ Достаточно хорошее расписание`);
+      break;
     }
   }
 
+  if (bestSchedule) {
+    const duration = Math.round((Date.now() - start) / 1000);
+    console.log(`\n╔════════════════════════════════════╗`);
+    console.log(`║  🎉 РАСПИСАНИЕ ГОТОВО!            ║`);
+    console.log(`║  Качество: ${bestScore}/100                  ║`);
+    console.log(`║  Время: ${duration}с                         ║`);
+    console.log(`╚════════════════════════════════════╝`);
+    
+    console.log(`\n✅ Применены правила:`);
+    console.log(`   🧮 НЕТ математики (алгебра+геометрия) подряд`);
+    console.log(`   🏃 Физ-ра ТОЛЬКО в конце дня`);
+    console.log(`   🧠 Сложные предметы на 2-4 уроках`);
+    console.log(`   😴 НЕТ сложных предметов в конце дня`);
+    console.log(`   📚 Классный час в конце дня`);
+    
+    return bestSchedule;
+  }
+
   console.warn('\n❌ Не удалось составить расписание');
-  console.warn('💡 Попробуйте:');
-  console.warn('   - Уменьшить часы hard-предметов (algebra: 3, geometry: 2)');
-  console.warn('   - Добавить учителей для загруженных предметов');
-  console.warn('   - Увеличить lessonsPerDay для классов до 7-8');
-  
   return null;
 }

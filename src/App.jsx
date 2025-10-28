@@ -10,7 +10,8 @@ import Settings from './pages/settings/settings';
 import About from './pages/about/about';
 import Reg from './components/reg/reg';
 import Login from './pages/login/login';
-import KidHome from './pages/kid/homekid'; 
+import KidHome from './pages/kid/homekid';
+import TeacherSchedule from './pages/TeacherSchedule/TeacherSchedule';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,9 +25,10 @@ const router = createBrowserRouter(
         <Route path="settings" element={<Settings />} />
         <Route path="about" element={<About />} />
       </Route>
-
+      {/* Страница для учителей */}
+      <Route path='/teacher-schedule' element={<Reg><TeacherSchedule /></Reg>} />
+      {/* Страница для учеников */}
       <Route path='/kid' element={<Reg><KidHome /></Reg>} />
-
       <Route path="login" element={<Login />} />
     </>
   )
