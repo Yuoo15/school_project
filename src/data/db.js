@@ -163,7 +163,7 @@ export const users = [
     password: "teacher123",
     status: "teacher",
     name: "Иван",
-    lastname: "Иванов", // ⬅️ Эта фамилия должна быть в имени учителя в системе
+    lastname: "Иванов", 
     clsId: null,
     avatar: photo,
   },
@@ -173,7 +173,7 @@ export const users = [
     password: "teacher123",
     status: "teacher",
     name: "Ольга",
-    lastname: "Петров", // ⬅️ Эта фамилия должна быть в имени учителя в системе
+    lastname: "Петров", // Эта фамилия должна быть в имени учителя в системе
     clsId: null,
     avatar: photo,
   },
