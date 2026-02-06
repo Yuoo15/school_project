@@ -9,7 +9,14 @@ export default () => {
   const location = useLocation();
   const { login } = useAuth();
   const fromPage = location.state?.from?.pathname || "/";
-  const { register, handleSubmit, formState } = useForm({ mode: "onChange" });
+  // Добавляем стандартные значения
+  const { register, handleSubmit, formState } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      username: "admin",
+      password: "admin123"
+    }
+  });
   
   const handler = (data) => {
     const { username, password } = data;
